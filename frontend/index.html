@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khmer Spellchecker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>ប្រព័ន្ធត្រួតពិនិត្យអក្ខរាវិរុទ្ធ (Khmer Spellchecker)</h1>
+    </header>
+
+    <main class="container">
+        <div class="panel">
+            <textarea id="inputText" placeholder="សូមបញ្ចូលអត្ថបទនៅទីនេះ..."></textarea>
+            <button id="checkBtn">ពិនិត្យអក្ខរាវិរុទ្ធ (Check Spelling)</button>
+        </div>
+        
+        <div class="panel">
+            <!-- The standard result area -->
+            <div id="resultArea" class="result-box" style="height: 100%;">
+                <p style="color: #888;">លទ្ធផលនឹងបង្ហាញនៅទីនេះ...</p>
+            </div>
+    </main>
+
+    <div id="suggestionBox" class="popup"></div>
+    <script src="script.js"></script>
+</body>
+</html>
