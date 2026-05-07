@@ -73,64 +73,51 @@ function renderAnnotatedText(annotatedArray) {
 
 function showSuggestions(spanElement, errorData) {
     suggestionBox.innerHTML = '';
+    suggestionBox.className = 'docs-suggestion-box'; // We will style this in CSS
 
-    // 1. Build the Header
-    const header = document.createElement('div');
-    header.className = 'popup-header';
-    header.innerHTML = `
-        <div class="popup-header-title">
-            <span class="popup-icon">ក</span>
-            <span>កំហុសអក្ខរាវិរុទ្ធ</span>
-        </div>
-        <button class="close-btn" onclick="document.getElementById('suggestionBox').style.display='none'">X</button>
-    `;
-    suggestionBox.appendChild(header);
-
-    // 2. Build the Body
-    const body = document.createElement('div');
-    body.className = 'popup-body';
-    
-    // The red crossed-out word
-    const wrongWord = document.createElement('div');
-    wrongWord.className = 'wrong-word-display';
-    wrongWord.innerText = errorData.typo;
-    body.appendChild(wrongWord);
-
-    // The Grid of Purple Buttons
-    const grid = document.createElement('div');
-    grid.className = 'suggestion-grid';
-
+    // 1. The Suggestions
     if (errorData.suggestions.length === 0) {
-        grid.innerHTML = '<span style="color:#888;">គ្មានពាក្យណែនាំទេ (No suggestions)</span>';
+        const noSugg = document.createElement('div');
+        noSugg.className = 'suggestion-item disabled';
+        noSugg.innerText = 'គ្មានពាក្យណែនាំទេ (No suggestions)';
+        suggestionBox.appendChild(noSugg);
     } else {
         errorData.suggestions.forEach(word => {
-            const btn = document.createElement('button');
-            btn.className = 'suggestion-btn';
-            btn.innerText = word;
-            btn.onclick = () => {
-                // Replace the text and remove the red underline!
+            const item = document.createElement('div');
+            item.className = 'suggestion-item';
+            item.innerText = word;
+            item.onclick = () => {
+                // Fix the typo
                 spanElement.innerText = word;
                 spanElement.className = '';
                 spanElement.style.color = 'black';
                 suggestionBox.style.display = 'none';
             };
-            grid.appendChild(btn);
+            suggestionBox.appendChild(item);
         });
     }
-    
-    body.appendChild(grid);
-    suggestionBox.appendChild(body);
 
-    // 3. Build the Footer
-    const footer = document.createElement('div');
-    footer.className = 'popup-footer';
-    footer.innerText = 'ភាសាខ្មែរ (Khmerlang)';
-    suggestionBox.appendChild(footer);
+    // Add a subtle divider
+    const divider = document.createElement('div');
+    divider.className = 'suggestion-divider';
+    suggestionBox.appendChild(divider);
 
-    // Position the box right below the clicked word
+    // 2. The "Ignore" Button (Just like Google Docs)
+    const ignoreItem = document.createElement('div');
+    ignoreItem.className = 'suggestion-item ignore-item';
+    ignoreItem.innerText = 'រំលង (Ignore)';
+    ignoreItem.onclick = () => {
+        // Remove the red underline but keep the word
+        spanElement.className = '';
+        spanElement.style.color = 'black';
+        suggestionBox.style.display = 'none';
+    };
+    suggestionBox.appendChild(ignoreItem);
+
+    // 3. Position the box directly under the word
     const rect = spanElement.getBoundingClientRect();
     suggestionBox.style.left = `${rect.left + window.scrollX}px`;
-    suggestionBox.style.top = `${rect.bottom + window.scrollY + 5}px`;
+    suggestionBox.style.top = `${rect.bottom + window.scrollY + 4}px`;
     suggestionBox.style.display = 'block';
 }
 

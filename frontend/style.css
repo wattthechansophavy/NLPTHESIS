@@ -178,3 +178,44 @@ button:hover {
     padding: 8px;
     font-size: 12px;
 }
+
+/* --- Google Docs Style Suggestion Box --- */
+.docs-suggestion-box {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 1000;
+    font-family: inherit;
+    padding: 4px 0;
+}
+
+.suggestion-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:hover:not(.disabled) {
+    background-color: #f1f3f4; /* Google's standard hover gray */
+}
+
+.suggestion-item.disabled {
+    color: #888;
+    cursor: default;
+    font-style: italic;
+}
+
+.suggestion-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 4px 0;
+}
+
+.ignore-item {
+    color: #5f6368;
+}
