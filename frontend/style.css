@@ -1,219 +1,181 @@
-body {
-    font-family: 'Hanuman', 'Khmer OS', Arial, sans-serif;
-    background-color: #f4f7f6;
+
+* {
+    box-sizing: border-box;
     margin: 0;
-    padding: 20px;
-    color: #333;
+    padding: 0;
 }
 
-header h1 {
-    text-align: center;
-    color: #2c3e50;
-}
-
-.container {
+body {
+    background-color: #f1f3f4; /* Standard Google gray background */
+    font-family: 'Kantumruy Pro', sans-serif;
+    color: #3c4043;
     display: flex;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* --- Header --- */
+.modern-header {
+    width: 100%;
+    padding: 24px;
+    background: white;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
+    margin-bottom: 40px;
+}
+
+.modern-header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    color: #5f6368;
     max-width: 1200px;
     margin: 0 auto;
-    height: 70vh;
 }
 
-.panel {
+.subtitle {
+    font-size: 16px;
+    color: #888;
+    font-weight: 400;
+}
+
+/* --- Main App Container (The Split View) --- */
+.app-container {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+    height: 450px; /* Fixed height like Translate */
+}
+
+/* --- The Panes --- */
+.pane {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-}
-
-textarea, .result-box {
-    width: 100%;
-    height: 100%;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    line-height: 1.6;
-    background: #fff;
-    box-sizing: border-box;
-    resize: none;
-}
-
-.result-box {
-    overflow-y: auto;
-    white-space: pre-wrap; /* Keeps paragraph breaks */
-}
-
-button {
-    padding: 15px;
-    font-size: 16px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-/* The red highlight for typos */
-.typo {
-    border-bottom: 2px dashed #e74c3c;
-    color: #c0392b;
-    cursor: pointer;
-    background-color: #fadbd8;
-}
-
-/* The floating suggestion menu */
-.popup {
-    position: absolute;
-    display: none;
-    background: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-radius: 5px;
-    z-index: 1000;
-    padding: 5px 0;
-}
-
-.suggestion-item {
-    padding: 8px 15px;
-    cursor: pointer;
-    color: #2980b9;
-}
-
-.suggestion-item:hover {
-    background-color: #ecf0f1;
-}
-/* --- THE NEW SUGGESTION POPUP UI --- */
-.popup {
-    position: absolute;
-    display: none;
-    background: #f8f9fa;
-    border: 1px solid #ccc;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    border-radius: 8px;
-    z-index: 1000;
-    width: 250px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #dadce0;
     overflow: hidden;
-    font-family: 'Khmer OS', 'Hanuman', sans-serif;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s;
 }
 
-.popup-header {
-    background-color: #e0e0e0;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-    border-bottom: 1px solid #ccc;
+.pane:focus-within {
+    box-shadow: 0 1px 6px rgba(32,33,36,0.15);
 }
 
-.popup-header-title {
+.pane-header {
+    padding: 12px 20px;
+    border-bottom: 1px solid #dadce0;
     display: flex;
     align-items: center;
-    gap: 10px;
 }
 
-.popup-icon {
-    background-color: #8e44ad;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 18px;
-}
-
-.close-btn {
-    background: #bbb;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.close-btn:hover { background: #999; }
-
-.popup-body {
-    padding: 15px;
-}
-
-.wrong-word-display {
-    color: #e74c3c;
-    text-decoration: line-through;
-    font-size: 16px;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-.suggestion-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.suggestion-btn {
-    background-color: #9b59b6;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
+.lang-label {
     font-size: 14px;
-    transition: background 0.2s;
+    font-weight: 500;
+    color: #1a73e8; /* Google Blue */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.suggestion-btn:hover { background-color: #8e44ad; }
+/* --- Text Areas --- */
+textarea, .result-box {
+    flex: 1;
+    border: none;
+    padding: 20px;
+    font-size: 20px; /* Larger, readable text */
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    color: #202124;
+    overflow-y: auto;
+}
 
-.popup-footer {
-    background-color: #8e44ad;
+.placeholder-text {
+    color: #80868b;
+}
+
+/* --- Footer & Buttons --- */
+.pane-footer {
+    padding: 12px 20px;
+    display: flex;
+    justify-content: flex-end; /* Pushes button to the right */
+}
+
+.action-btn {
+    background-color: #1a73e8;
     color: white;
-    text-align: center;
-    padding: 8px;
-    font-size: 12px;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 24px; /* Pill shape */
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-/* --- Google Docs Style Suggestion Box --- */
+.action-btn:hover {
+    background-color: #1557b0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.action-btn:disabled {
+    background-color: #e8eaed;
+    color: #9aa0a6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* --- Typo Highlighting --- */
+.typo {
+    color: #d93025; /* Exact Google Red */
+    border-bottom: 2px dashed #d93025;
+    cursor: pointer;
+}
+
+.typo:hover {
+    background-color: #fce8e6; /* Soft red hover */
+}
+
+/* --- Google Docs Style Suggestion Box (From Earlier) --- */
 .docs-suggestion-box {
     position: absolute;
     background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    min-width: 150px;
+    min-width: 180px;
     z-index: 1000;
     font-family: inherit;
-    padding: 4px 0;
+    padding: 8px 0;
 }
 
 .suggestion-item {
-    padding: 8px 16px;
+    padding: 10px 16px;
     cursor: pointer;
-    font-size: 14px;
-    color: #333;
+    font-size: 15px;
+    color: #3c4043;
     transition: background-color 0.2s;
 }
 
 .suggestion-item:hover:not(.disabled) {
-    background-color: #f1f3f4; /* Google's standard hover gray */
+    background-color: #f1f3f4;
 }
 
 .suggestion-item.disabled {
-    color: #888;
+    color: #80868b;
     cursor: default;
     font-style: italic;
 }
 
 .suggestion-divider {
     height: 1px;
-    background-color: #e0e0e0;
-    margin: 4px 0;
+    background-color: #e8eaed;
+    margin: 6px 0;
 }
 
 .ignore-item {
