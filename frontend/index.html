@@ -4,33 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Khmer Spellchecker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;600&family=Moul&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="modern-header">
-        <h1>ប្រព័ន្ធត្រួតពិនិត្យអក្ខរាវិរុទ្ធ <span class="subtitle">Khmer Spellchecker</span></h1>
+    <header class="custom-header">
+        <h1>ប្រព័ន្ធត្រួតពិនិត្យអក្ខរាវិរុទ្ធ</h1>
+        <p class="subtitle">Khmer Context-Aware Spellchecker</p>
     </header>
 
     <main class="app-container">
-        <div class="pane input-pane">
-            <div class="pane-header">
-                <span class="lang-label">Khmer</span>
-            </div>
-            <textarea id="inputText" placeholder="សូមបញ្ចូលអត្ថបទនៅទីនេះ (Type or paste Khmer text here)..."></textarea>
+        <div class="pane">
+            <div class="pane-header">អត្ថបទដើម (Input)</div>
+            <textarea id="inputText" placeholder="សូមបញ្ចូលអត្ថបទនៅទីនេះ..."></textarea>
             <div class="pane-footer">
-                <button id="checkBtn" class="action-btn">ពិនិត្យ (Check Spelling)</button>
+                <button id="checkBtn" class="action-btn">ពិនិត្យអក្ខរាវិរុទ្ធ</button>
             </div>
         </div>
         
-        <div class="pane result-pane">
-            <div class="pane-header">
-                <span class="lang-label">Results</span>
-            </div>
+        <div class="pane">
+            <div class="pane-header">លទ្ធផល (Output)</div>
             <div id="resultArea" class="result-box">
                 <p class="placeholder-text">លទ្ធផលនឹងបង្ហាញនៅទីនេះ...</p>
             </div>
+            <div class="pane-footer">
+                <button id="copyBtn" class="action-btn secondary-btn" disabled>ចម្លងអត្ថបទ (Copy)</button>
+            </div>
         </div>
+        
     </main>
 
     <div id="suggestionBox" class="docs-suggestion-box" style="display: none;"></div>
