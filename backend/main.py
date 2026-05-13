@@ -41,51 +41,63 @@ def is_clean_word(word):
     if word.isnumeric(): return False
     return True
 
-# --- PHASE 2: THE DE-GLUER (Solves Under-segmentation) ---
+# --- PHASE 2: THE DE-GLUER ---
+# --- PHASE 2: THE DE-GLUER (Patched with Unicode Shield) ---
 def split_glued_typo(word):
-    """Snaps a broken token in half if it contains a trapped valid word."""
     if word in unigrams or not is_clean_word(word):
         return [word]
         
-    # Check if a valid prefix is glued to a typo (e.g., "មានសច" -> "មាន", "សច")
     for i in range(len(word)-1, 0, -1):
         prefix = word[:i]
         suffix = word[i:]
+        
+        # FIX: Forbid splitting if the suffix starts with a dependent vowel, subscript, or diacritic!
+        if re.match(r'^[\u17B4-\u17D3]', suffix):
+            continue
+            
         if prefix in unigrams:
-            if len(suffix) > 1: # Prevent snapping off single random letters
+            if len(suffix) > 1: 
                 return [prefix, suffix]
                 
-    # Check if a typo is glued to a valid suffix
     for i in range(1, len(word)):
         prefix = word[:i]
         suffix = word[i:]
+        
+        # FIX: Forbid splitting if the suffix starts with a dependent vowel, subscript, or diacritic!
+        if re.match(r'^[\u17B4-\u17D3]', suffix):
+            continue
+            
         if suffix in unigrams:
             if len(prefix) > 1:
                 return [prefix, suffix]
                 
     return [word]
 
-# --- PHASE 3: THE RE-JOINER (Solves Over-segmentation) ---
+# --- PHASE 3: THE RE-JOINER (Patched Cannibal Bug) ---
 def should_merge(w1, w2):
-    """Tests if gluing two broken tokens together creates a valid word."""
     if not is_clean_word(w1) or not is_clean_word(w2):
         return False
     
     combined = w1 + w2
-    
     if combined in unigrams:
         return True
         
-    if w1 not in unigrams or w2 not in unigrams:
+    # FIX: ONLY run heavy fuzzy merge if BOTH pieces are broken.
+    # Prevents a valid word from swallowing an adjacent short typo.
+    if w1 not in unigrams and w2 not in unigrams:
         for vocab_word in unigrams.keys():
             if abs(len(combined) - len(vocab_word)) <= 2:
                 if editdistance.eval(combined, vocab_word) <= 2:
                     return True 
     return False
 
-# --- PHASE 4: THE SUGGESTION ENGINE ---
+# --- PHASE 4: THE SUGGESTION ENGINE (Patched Diacritic Blindspot) ---
+# --- PHASE 4: THE SUGGESTION ENGINE (Universal Diacritic Patch) ---
 def get_contextual_suggestions(typo, prev_word=None, next_word=None, max_distance=2):
     candidates = []
+    
+    # The complete list of crucial Khmer diacritics and shifters
+    khmer_diacritics = ['់', '៌', '័', '៏', '៊', '៉']
     
     for vocab_word, unigram_freq in unigrams.items():
         if abs(len(typo) - len(vocab_word)) > max_distance: continue
@@ -94,11 +106,29 @@ def get_contextual_suggestions(typo, prev_word=None, next_word=None, max_distanc
         if dist <= max_distance:
             score = (dist * 10000) - unigram_freq
             
+            # 1. Standard Character Pair Confusion Matrix
             for i in range(min(len(typo), len(vocab_word))):
                 char_pair = (typo[i], vocab_word[i])
                 if char_pair in khmer_common_typos or char_pair[::-1] in khmer_common_typos:
                     score -= 5000 
             
+            # 2. UNIVERSAL DIACRITIC CHECK (Works anywhere in the word)
+            # If the edit distance is exactly 1, let's see if it's just a diacritic issue
+            if dist == 1:
+                if len(vocab_word) > len(typo):
+                    # Typo is missing a diacritic
+                    for d in khmer_diacritics:
+                        if vocab_word.replace(d, '', 1) == typo:
+                            score -= 8000 # Massive reward
+                            break
+                elif len(typo) > len(vocab_word):
+                    # Typo has an accidental extra diacritic
+                    for d in khmer_diacritics:
+                        if typo.replace(d, '', 1) == vocab_word:
+                            score -= 8000 # Massive reward
+                            break
+            
+            # 3. Context Integration
             if prev_word:
                 back_key = f"{prev_word} {vocab_word}"
                 if back_key in bigrams:
@@ -113,7 +143,6 @@ def get_contextual_suggestions(typo, prev_word=None, next_word=None, max_distanc
             
     candidates.sort(key=lambda x: x[1])
     return [word for word, score in candidates[:3]]
-
 
 @app.post("/check_spelling")
 async def check_spelling(payload: TextPayload):
@@ -133,15 +162,12 @@ async def check_spelling(payload: TextPayload):
             continue
             
         try:
-            # PHASE 1: Tokenization
             raw_words = word_tokenize(chunk, return_tokens=True)
             
-            # PHASE 2: Apply De-Gluer
             split_words = []
             for w in raw_words:
                 split_words.extend(split_glued_typo(w))
             
-            # PHASE 3: Apply Re-Joiner
             chunk_words = []
             skip_next = False
             for i in range(len(split_words)):
@@ -163,7 +189,6 @@ async def check_spelling(payload: TextPayload):
             print(f"Tokenization error on chunk: {chunk} - Error: {e}")
             chunk_words = [chunk]
             
-        # PHASE 4: Evaluate and Suggest
         prev_word = None 
             
         for i, word in enumerate(chunk_words):
